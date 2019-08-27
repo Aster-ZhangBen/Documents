@@ -1,3 +1,5 @@
+
+
 # 开发者对sonic概述
 
 参考[sonic官方库 Developer's overview of sonic]([https://github.com/Azure/SONiC/blob/master/doc/Developer's%20Overview%20of%20SONiC%20-%20LNKD.pdf](https://github.com/Azure/SONiC/blob/master/doc/Developer's Overview of SONiC - LNKD.pdf))
@@ -18,9 +20,19 @@
 
 ![基本功能模块](https://img-blog.csdn.net/20180803132126345?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXN5MTEyOA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 
-
-
 - ### 具体模块间交互
+
+  ![img](https://raw.githubusercontent.com/mykolaf/SONiC/master/images/watermark_HLD/SystemOverview.png)
+
+- **gRPC：系统数据远程基础。允许从sonic数据库和其他数据库中获取请求数据**
+- **counter DB：位于Redis数据库例#2，redis数据库运行在database容器里。redis数据库使用符合键值元组格式的数据，不需要预先定义模式并且保存各种计数器，如端口计数器，ACL计数器等。**
+- **orchestration agent:这个组件运行在orchagent的Docke容器中，负责处理APP数据库的更新并且在通过SAI Redis在SAI数据库中做对应的改变**
+- **SAI Redis：实现SAI API，这个SAI API将API调用转化成储存在ASIC数据库的SAI对象【其实就是这个的作用是做SAI接口和底层芯片数据库中SAI对象的映射】**
+- **ASIC DB：Redis数据库实例＃1。 保存序列化的SAI对象。**
+- **syncd:读取SAI DB数据（SAI对象）并对Switch SAI执行适当的调用。**
+- **SAI(Redis and Switch):统一的API，将开关状态表示为一组对象。 在SONiC中有两个实现 ——SAI DB前端和ASIC SDK包装器。**
+
+![1565603764155](/home/ben/.config/Typora/typora-user-images/1565603764155.png)
 
 1. redis-sever,不同的数据库，键值的设置，和redis交互的基本library
 
@@ -31,6 +43,7 @@
    fpm lldp team port 以及neigh同步
 
 4. orchagent【swss docker】
+
 5. 使用sonic基本镜像或者在一个新的Docker中编译文件总概性构造一个新的特性
 
 ![1565603764155](/home/ben/.config/Typora/typora-user-images/1565603764155.png)
@@ -64,3 +77,6 @@ Python库如下：
 
 数据库通信Python文件[dbconnector](https://github.com/Azure/sonic-py-swsssdk/blob/master/src/swsssdk/dbconnector.py)
 
+这个文件后面都是一些数据库的概览
+
+见[developer's overview of sonic](/home/ben/Documents/SONiC-NOTE/Developer's Overview of SONiC - LNKD.pdf)
